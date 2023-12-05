@@ -3,6 +3,7 @@ import pathlib
 import logging
 import argparse
 import shutil
+import frontmatter
 
 def parseargs():
     parser = argparse.ArgumentParser()
@@ -29,6 +30,17 @@ def create_index_files(notes_dir): # Move e.g. foo/bar/baz.md to foo/bar/baz/_in
             indx_file = pathlib.Path(root, dir, '_index.md')
             if not indx_file.exists():
                 logging.error("ERROR: Directory %s does not have an _index.md file.", pathlib.Path(root, dir))
+
+    # Fix frontmatter of _index.md in root folder
+    indx_file = pathlib.Path(notes_dir, 'Publish', '_index.md')
+    post = frontmatter.load(indx_file)
+    post['title'] = 'Notes'
+    post['cascade'] = {'type': 'docs'}
+    post['menu'] = {'main': {'title': 'Notes', 'weight': '45'}}
+    post['publish'] = True
+    f = open(indx_file, 'wb') # Note the 'wb'. Need to open file for binary writing, else frontmatter.dump() will not work
+    frontmatter.dump(post, f)
+    f.close()
 
 def main():
     pathlib.Path('logs').mkdir(parents=True, exist_ok=True) # Create logs/ dir if it does not exist
