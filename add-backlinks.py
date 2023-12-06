@@ -32,9 +32,9 @@ def find_hugo_links(notes_dir, dbconn): # Find all hugo references to other note
                 from_file_str = "/notes"+str(file).removeprefix("notes/Publish") # file will be e.g. notes/Publish/snippets/Programmer entrepreneur journey.md. Need to remove the notes/Publish and replace with /notes/snippets/Programmer entrepreneur journey.md
                 from_file_title = get_post_title(file)
                 #to_file_str = match.strip('"')+".md" # match will be e.g. "/notes/snippets/Simple vs easy" and need to strip the " from beginning and end
-                if pathlib.Path(str(notes_dir)+"/Publish/"+match.strip('"').removeprefix("/notes")).is_dir():
+                if pathlib.Path(str(notes_dir)+"/Publish/"+match.strip('"').removeprefix("/notes")).is_dir(): # If the match is to a dir, then the link is actually to the _index.md file inside that directory, because the directory.md was converted to directory/_index.md by create-index-files.py
                     to_file_str = match.strip('"')+"/_index.md"
-                elif pathlib.Path(str(notes_dir)+"/Publish/"+match.strip('"').removeprefix("/notes")+".md").is_file():
+                elif pathlib.Path(str(notes_dir)+"/Publish/"+match.strip('"').removeprefix("/notes")+".md").is_file(): # check that the file being linked to actually exists
                     to_file_str = match.strip('"')+".md"
                 else:
                     print(f"ERROR: {file} seems to have invalid link to {match}")
@@ -66,9 +66,9 @@ def add_backlinks(notes_dir, dbconn):
                     filedata = tuples[2].strip()
                 filedata +=  "\n\n## Backlinks\n"
                 for backlink in backlinks_list: # backlinks_list is like [('/notes/snippets/Simple vs easy.md', "Snippets"), ('/notes/optional notes/_index.md', "optional notes")]
-                    if backlink[0].endswith("_index.md"):
+                    if backlink[0].endswith("_index.md"): #Hugo says, if you are adding a ref to _index.md, you should actually add a ref to the containing folder. See https://gohugo.io/content-management/cross-references/
                         backlink_url = "["+backlink[1]+"]({{< ref \""+backlink[0].rpartition("/")[0]+"\" >}})"
-                    else:
+                    else: # the .md is not needed when creating Hugo refs
                         backlink_url = "["+backlink[1]+"]({{< ref \""+backlink[0].rpartition(".md")[0]+"\" >}})"
                     filedata += "\n- "+backlink_url
                     logging.info("Adding backlink %s to %s", backlink_url, filename)
