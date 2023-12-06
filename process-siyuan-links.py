@@ -6,8 +6,8 @@ import requests
 
 # Replace 'YOUR_API_ENDPOINT' with the actual Siyuan API endpoint
 SIYUAN_API_ENDPOINT = "http://localhost:6806"
-URL_PREFIX = "/notes"
-HPATH_PREFIX_TO_REMOVE="/Publish"
+URL_PREFIX = "/notes/"
+HPATH_PREFIX="/Publish/"
 
 def parseargs():
     parser = argparse.ArgumentParser()
@@ -23,7 +23,8 @@ def query_block_details(block_id):
 
 def process_siyuan_links(file):
     if not file.exists():
-        logging.error("ERROR: The file %s does not exist. Exiting", file)
+        print("ERROR: The file ", file, " does not exist. Skipping.")
+        logging.error("ERROR: The file %s does not exist. Skipping.", file)
         return
     with open (file, "r", encoding="utf-8") as f:
         logging.info(f"Processing {file}")
@@ -32,10 +33,11 @@ def process_siyuan_links(file):
         for block_id in matches:
             result = query_block_details(block_id)
             if not result:
-                logging.error("ERROR: No result for block_id {block_id}")
+                print(f"ERROR: No result for block_id {block_id}")
+                logging.error(f"ERROR: No result for block_id {block_id}")
             #assumes ref is of a doc, not a block inside a doc
             if result:
-                hpath_value = result["data"][0].get("hpath").removeprefix(HPATH_PREFIX_TO_REMOVE) # For my notes, hpath_value will be of the type /Publish/path/to/note. Need to remove the /Publish prefix.
+                hpath_value = result["data"][0].get("hpath").removeprefix(HPATH_PREFIX) # For my notes, hpath_value will be of the type /Publish/path/to/note. Need to remove the /Publish/ prefix.
                 #new_link = f"({URL_PREFIX}{hpath_value}.md)" # Uncomment this (and comment the next line) to enable regular markdown style links
                 new_link = f'({{{{< ref "{URL_PREFIX}{hpath_value}" >}}}})' # This is Hugo style ref links (https://gohugo.io/content-management/cross-references/). Note that due to Python f string formatting, double curlies {{ in the output need to be expressed as four curlies
                 logging.info(f"Replacing (siyuan://blocks/{block_id}) with {new_link}")

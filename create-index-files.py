@@ -5,6 +5,8 @@ import argparse
 import shutil
 import frontmatter
 
+HPATH_PREFIX="/Publish/"
+
 def parseargs():
     parser = argparse.ArgumentParser()
     parser.add_argument('notes_dir', help="The full pathname to the folder containing markdown notes exported from SiYuan")
@@ -29,10 +31,11 @@ def create_index_files(notes_dir): # Move e.g. foo/bar/baz.md to foo/bar/baz/_in
         for dir in dirs:
             indx_file = pathlib.Path(root, dir, '_index.md')
             if not indx_file.exists():
+                print("ERROR: Directory ", str(pathlib.Path(root,dir)), " does not have an _index.md file.")
                 logging.error("ERROR: Directory %s does not have an _index.md file.", pathlib.Path(root, dir))
 
     # Fix frontmatter of _index.md in root folder
-    indx_file = pathlib.Path(notes_dir, 'Publish', '_index.md')
+    indx_file = pathlib.Path(notes_dir, HPATH_PREFIX.strip("/"), '_index.md') # If HPATH_PREFIX has a leading /, then pathlib.Path will ignore all arguments preceding it. We want to avoid that, so stripping the leading (and trailing too, because why not?, pathlib.Path will add it in anyway) "/"
     post = frontmatter.load(indx_file)
     post['title'] = 'Notes'
     post['cascade'] = {'type': 'docs'}
