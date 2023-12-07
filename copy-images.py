@@ -1,0 +1,1 @@
+# SiYuan exports the relevant images into assets folders in the folder tree. Maybe the simplest way is to simply traverse the notes_dir, and for each assets folder, copy its contents over to Hugo's static/assets/images folder? Will also need to tweak the URLs in the markdown image links. Probably need to replace assets with assets/images/
