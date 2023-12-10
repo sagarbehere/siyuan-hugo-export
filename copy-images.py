@@ -1,5 +1,3 @@
-# SiYuan exports the relevant images into assets folders in the folder tree. Maybe the simplest way is to simply traverse the notes_dir, and for each assets folder, copy its contents over to Hugo's static/assets/images folder? Will also need to tweak the URLs in the markdown image links. Probably need to replace assets with assets/images/
-
 import pathlib
 import logging
 import argparse
@@ -47,8 +45,7 @@ def process_image_links(notes_dir, destination_dir):
                     logging.info(f"Found reference to {imagefile} in {file}. Replacing with {URL_PREFIX+str(imagefile.name)}")
                     file_content = file_content.replace(image.group(1), URL_PREFIX+str(imagefile.name)+" ")#Need to add the space at the end of the filepath
                     file_content_modified = True
-                    # TODO: copy image file to destination
-                    shutil.copy2(imagefile, destination_dir) #TODO: remove hardcoded assets folder name
+                    shutil.copy2(imagefile, destination_dir)
         # Write the updated content back to the file
         if file_content_modified:
             with open(file, "w", encoding="utf-8") as f:

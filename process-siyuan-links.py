@@ -32,7 +32,7 @@ def process_siyuan_links(file):
         f.close()
         matches = re.findall(r"\[.*?\]\(siyuan://blocks/(.*?)\)", content)
         if not matches: #No links found
-            logging.info(f"{file} has no links.")
+            logging.info(f"{file} has no SiYuan links.")
             return
         for block_id in matches:
             result = query_block_details(block_id)

@@ -41,8 +41,8 @@ def find_hugo_links(notes_dir, dbconn): # Find all hugo references to other note
                 elif pathlib.Path(str(notes_dir)+HPATH_PREFIX+match.strip('"').removeprefix(URL_PREFIX)+".md").is_file(): # check that the file being linked to actually exists
                     to_file_str = match.strip('"')+".md"
                 else:
-                    print(f"ERROR: {file} seems to have invalid link to {match}. Skipping.")
-                    logging.error(f"ERROR: {file} seems to have invalid link to {match}. Skipping.")
+                    print(f"WARNING: {file} seems to have invalid link to {match}. Skipping.")
+                    logging.warning(f"WARNING: {file} seems to have invalid link to {match}. Skipping.")
                     continue
 
                 dbcursor.execute('''INSERT INTO links ("from", "from_title", "to") VALUES (?, ?, ?)''', (from_file_str, from_file_title, to_file_str))

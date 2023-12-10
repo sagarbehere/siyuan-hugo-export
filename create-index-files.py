@@ -27,12 +27,12 @@ def create_index_files(notes_dir): # Move e.g. foo/bar/baz.md to foo/bar/baz/_in
                 shutil.move(pathlib.Path(root,file), pathlib.Path(root, dirs[indx], '_index.md'))
 
     #Sanity check: At this point, all folders in notes_dir should have an _index.md file.
-    for root, dirs, files in os.walk(notes_dir):
-        for dir in dirs:
-            indx_file = pathlib.Path(root, dir, '_index.md')
-            if not indx_file.exists():
-                print("ERROR: Directory ", str(pathlib.Path(root,dir)), " does not have an _index.md file.")
-                logging.error("ERROR: Directory %s does not have an _index.md file.", pathlib.Path(root, dir))
+    #for root, dirs, files in os.walk(notes_dir):
+        #for dir in dirs:
+            #indx_file = pathlib.Path(root, dir, '_index.md')
+            #if not indx_file.exists():
+                #print("WARNING: Directory ", str(pathlib.Path(root,dir)), " does not have an _index.md file.")
+                #logging.warning("WARNING: Directory %s does not have an _index.md file.", pathlib.Path(root, dir))
 
     # Fix frontmatter of _index.md in root folder
     indx_file = pathlib.Path(notes_dir, HPATH_PREFIX.strip("/"), '_index.md') # If HPATH_PREFIX has a leading /, then pathlib.Path will ignore all arguments preceding it. We want to avoid that, so stripping the leading (and trailing too, because why not?, pathlib.Path will add it in anyway) "/"
