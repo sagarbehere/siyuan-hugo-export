@@ -29,7 +29,11 @@ def process_siyuan_links(file):
     with open (file, "r", encoding="utf-8") as f:
         logging.info(f"Processing {file}")
         content = f.read()
+        f.close()
         matches = re.findall(r"\[.*?\]\(siyuan://blocks/(.*?)\)", content)
+        if not matches: #No links found
+            logging.info(f"{file} has no links.")
+            return
         for block_id in matches:
             result = query_block_details(block_id)
             if not result:
@@ -42,7 +46,7 @@ def process_siyuan_links(file):
                 new_link = f'({{{{< ref "{URL_PREFIX}{hpath_value}" >}}}})' # This is Hugo style ref links (https://gohugo.io/content-management/cross-references/). Note that due to Python f string formatting, double curlies {{ in the output need to be expressed as four curlies
                 logging.info(f"Replacing (siyuan://blocks/{block_id}) with {new_link}")
                 content = content.replace(f"(siyuan://blocks/{block_id})", new_link)
-        f.close()
+
     # Write the updated content back to the file
     with open(file, "w", encoding="utf-8") as f:
         f.write(content)
