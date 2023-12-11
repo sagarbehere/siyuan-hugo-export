@@ -36,10 +36,10 @@ def find_hugo_links(notes_dir, dbconn): # Find all hugo references to other note
                 from_file_str = URL_PREFIX+str(file).removeprefix(str(notes_dir)+HPATH_PREFIX) # file will be e.g. notes/Publish/snippets/Programmer entrepreneur journey.md. Need to remove the notes/Publish and replace with /notes/snippets/Programmer entrepreneur journey.md
                 from_file_title = get_post_title(file)
                 #to_file_str = match.strip('"')+".md" # match will be e.g. "/notes/snippets/Simple vs easy" and need to strip the " from beginning and end
-                if pathlib.Path(str(notes_dir)+HPATH_PREFIX+match.strip('"').removeprefix(URL_PREFIX)).is_dir(): # If the match is to a dir, then the link is actually to the _index.md file inside that directory, because the directory.md was converted to directory/_index.md by create-index-files.py
-                    to_file_str = match.strip('"')+"/_index.md"
-                elif pathlib.Path(str(notes_dir)+HPATH_PREFIX+match.strip('"').removeprefix(URL_PREFIX)+".md").is_file(): # check that the file being linked to actually exists
-                    to_file_str = match.strip('"')+".md"
+                if pathlib.Path(str(notes_dir)+HPATH_PREFIX+match.strip('"').removeprefix(URL_PREFIX).rsplit('#',1)[0]).is_dir(): # If the match is to a dir, then the link is actually to the _index.md file inside that directory, because the directory.md was converted to directory/_index.md by create-index-files.py. We str.rsplit('#',1([0] to eliminate everything after any potential # in the url (i.e. discard the anchor text)
+                    to_file_str = match.strip('"').rsplit('#',1)[0]+"/_index.md"
+                elif pathlib.Path(str(notes_dir)+HPATH_PREFIX+match.strip('"').removeprefix(URL_PREFIX).rsplit('#',1)[0]+".md").is_file(): # check that the file being linked to actually exists
+                    to_file_str = match.strip('"').rsplit('#',1)[0]+".md"
                 else:
                     print(f"WARNING: {file} seems to have invalid link to {match}. Skipping.")
                     logging.warning(f"WARNING: {file} seems to have invalid link to {match}. Skipping.")
