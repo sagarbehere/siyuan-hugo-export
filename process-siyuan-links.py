@@ -77,11 +77,11 @@ def process_siyuan_links(file, notes_dir):
             return
         for block_id in matches:
             result = query_block_details(block_id)
-            if not result:
-                print(f"ERROR: No result for block_id {block_id}")
-                logging.error(f"ERROR: No result for block_id {block_id}")
+            if not result["data"]:
+                print(f"WARNING: In {file} : No result for block_id {block_id}")
+                logging.warning(f"ERROR: In {file} : No result for block_id {block_id}")
             #assumes ref is of a doc, not a block inside a doc
-            if result:
+            else:
                 #hpath_value = result["data"][0].get("hpath").removeprefix(HPATH_PREFIX) # For my notes, hpath_value will be of the type /Publish/path/to/note. Need to remove the /Publish/ prefix.
                 #new_link = f"({URL_PREFIX}{hpath_value}.md)" # Uncomment this (and comment the next line) to enable regular markdown style links
                 #new_link = f'({{{{< ref "{URL_PREFIX}{hpath_value}" >}}}})' # This is Hugo style ref links (https://gohugo.io/content-management/cross-references/). Note that due to Python f string formatting, double curlies {{ in the output need to be expressed as four curlies
