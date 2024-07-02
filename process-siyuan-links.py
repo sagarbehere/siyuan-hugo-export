@@ -3,6 +3,7 @@ import pathlib
 import logging
 import argparse
 import requests
+import os
 
 # Replace 'YOUR_API_ENDPOINT' with the actual Siyuan API endpoint
 SIYUAN_API_ENDPOINT = "http://localhost:6806"
@@ -18,7 +19,7 @@ def parseargs():
 # Function to make a SQL query to Siyuan API
 def query_block_details(block_id):
     query = {"stmt": f"SELECT * FROM blocks WHERE id='{block_id}'"}
-    response = requests.post(f"{SIYUAN_API_ENDPOINT}/api/query/sql", json=query)
+    response = requests.post(f"{SIYUAN_API_ENDPOINT}/api/query/sql", json=query, headers={"Authorization": "Token "+os.environ.get("AUTHTOKEN")})
     return response.json()
 
 def get_new_link(result, notes_dir): #result is the result of the JSON query
